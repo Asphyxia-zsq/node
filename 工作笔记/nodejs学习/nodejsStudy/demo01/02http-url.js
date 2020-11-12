@@ -17,3 +17,4 @@ http.createServer((request,response)=>{
   const md5 = require('md5')
   response.end(md5('12345'))
 }).listen(3000) //设置端口
+
