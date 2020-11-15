@@ -121,7 +121,41 @@ node_modules => axios => indes.js
 
 
 
-# npm安装包时 i ,-g,-s,-d的区别
+# npm 、 packge.json
+
+
+
+## npm命令
+
+```
+npm i jqery --save//安装模块
+npm uninstall jqery //卸载模块
+npm list //查看目录下的模块
+npm info jqery //查看包的信息
+npm i jqery@1.8.0 --save //指定版本安装
+```
+
+## packge.json
+
+```
+{
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "jquery": "^3.5.1",
+    "mui": "0.0.1",
+    "silly-datetime": "^0.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.13.0"
+  }
+}
+
+^表示第一位版本号不变后两位取最新
+*表示全部取最新
+~前两位不变，最后去最新
+```
+
+## npm安装包时 i ,-g,-s,-d的区别
 
 - **`i`** 是 **`install`** 的简写
 - **`-g`** 是全局安装，不带 **`-g`** 会安装在个人文件夹
@@ -141,21 +175,113 @@ node_modules => axios => indes.js
 
 
 
-# nodejs中的包、npm、第三方模块、packge.json以及cnpm
 
 
 
 
+# node 中的fs模块
+
+1. fs.stat //检测时文件还是目录
+2. fs.mkdir //创建目录
+3.  fs.writeFile //写入文件
+4. fs.appendFile //添加文件
+5. fs.readFile //读取文件
+6. fs.readdir //读取目录
+7. fs.rename //重命名
+8. fs.rmdir 删除目录
+9. fs.unlink 删除文件
 
 
 
+```
+const fs = require('fs')
+fs.stat('./html',(err,data)=>{
+    err && console.log(err)
+    // 判断是文件还是目录
+    data&&console.log(data,data.isFile(),data.isDirectory())
+})
+```
 
 
 
+```
+fs.mkdir('./css',(err,data)=>{
+    err && console.log(err)
+    console.log(‘创建成功')
+})
+```
 
 
 
+```
+//创建并写入文件，如果文件存在进行替换
+fs.writeFile('./html/index.html','你好nodejs',err=>{
+  if(err){
+    return console.log(err)
+
+  }
+  console.log('创建并写入成功')
+})
+```
 
 
 
+```
+//如果文件不存在创建并写入，如果存在追加内容
+fs.appendFile('./css/base.css','body{color:red};',err=>{
+    if(err){
+        return console.log(err)
+    }
+    console.log('追加文件成功')
+})
+```
+
+
+
+```
+fs.readFile('./html/index.html',(err,data)=>{
+    if(err){
+        return console.log(err)
+    }
+    console.log(data.toString())  //把buffer转string类型
+})
+```
+
+
+
+```
+fs.readdir('./html',(err,data)=>{
+    if(err){
+        return console.log(err)
+    }
+    console.log(data) 
+})
+```
+
+# async和await
+
+async是执行异步方法
+
+await是等待异步方法的执行
+
+
+
+await必须放在async的方法里面
+
+```
+async function a() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(123);
+    }, 1000);
+  });
+}
+
+async function b() {
+  let avalue = await a();
+  console.log(avalue);
+}
+b();
+
+```
 
