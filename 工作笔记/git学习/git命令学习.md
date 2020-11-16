@@ -113,6 +113,60 @@ $ git reflog
 1. 你第一次git add a.txt  和commit -m ‘第一次提交’，a.txt 的内容为1
 
 2. 你第二次git add a.txt  和commit -m ‘第二次提交  a.txt 的内容为12
+
 3. 你第三次git add a.txt  和commit -m ‘第三次提交   a.txt 的内容为123
+
 4. 第三次后你把 a.txt 的内容为1234 进行 git add a.txt
+
 5. 这时你回退版本后就无法恢复到 a.txt 内容为1234的版本
+
+   
+
+# 工作区、暂存区、版本库、远程库
+
+#### 工作区（Working Directory）
+
+就是你在电脑里能看到的目录，比如我的`note`文件夹就是一个工作区：
+
+工作区进行add后 =》 就添加到了暂存区commit后 =》就添加到了版本库push =》就添加到了远程库
+
+
+
+# 查看工作区和版本库里面最新版本的区别
+
+```
+$ git diff HEAD -- readme.txt 
+diff --git a/readme.txt b/readme.txt
+index 76d770f..a9c5755 100644
+--- a/readme.txt
++++ b/readme.txt
+@@ -1,4 +1,4 @@
+ Git is a distributed version control system.
+ Git is free software distributed under the GPL.
+ Git has a mutable index called stage.
+-Git tracks changes.
++Git tracks changes of files.
+```
+
+
+
+# 撤销修改
+
+```
+git checkout -- readme.txt
+```
+
+`git checkout -- file`命令中的`--`很重要，没有`--`，就变成了“切换到另一个分支”的命令，我们在后面的分支管理中会再次遇到`git checkout`命令。
+
+
+
+# 删除文件
+
+```
+$ rm test.txt //删除本地文件
+$ git commit -m "remove test.txt" 把版本库的文件删除
+$ git push origin main //把远版本库提交到远程库
+```
+
+
+
