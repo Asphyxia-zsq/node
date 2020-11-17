@@ -216,7 +216,11 @@ git clone git@github.com:Jokesq/demo.git
 
 # 分支管理
 
-## 创建分支
+## 创建与合并删除分支
+
+
+
+### 创建分支
 
 ```
 $ git checkout -b dev
@@ -231,7 +235,7 @@ $ git checkout dev
 Switched to branch 'dev'
 ```
 
-## 查看分支
+### 查看分支
 
 然后，用`git branch`命令查看当前分支：
 
@@ -260,7 +264,7 @@ $ git commit -m "branch test"
 
 现在，`dev`分支的工作完成，我们就可以切换回`master`分支：
 
-## 切换分支
+### 切换分支
 
 ```
 $ git checkout master
@@ -269,7 +273,7 @@ Switched to branch 'master'
 
  切换回`master`分支后，再查看一个`readme.txt`文件，刚才添加的内容不见了！因为那个提交是在`dev`分支上，而`master`分支此刻的提交点并没有变：
 
-## 合并分支
+### 合并分支
 
 现在，我们把`dev`分支的工作成果合并到`master`分支上：
 
@@ -289,7 +293,7 @@ Fast-forward
 
 合并完成后，就可以放心地删除`dev`分支了：
 
-## 删除分支
+### 删除分支
 
 ```
 $ git branch -d dev
@@ -304,3 +308,8 @@ $ git branch
 ```
 
 因为创建、合并和删除分支非常快，所以Git鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在`master`分支上工作效果是一样的，但过程更安全。
+
+
+
+## 解决冲突
+
