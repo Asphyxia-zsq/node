@@ -8,10 +8,9 @@ class Parentcom extends React.Component{
     this.state = {
       isShow:true
     }
-    // this.onclick = this.onclick.bind(this)
+    this.onclick = this.onclick.bind(this)
   }
   onclick(){
-    console.log(this)
     this.setState({isShow:!this.state.isShow})
   }
     
