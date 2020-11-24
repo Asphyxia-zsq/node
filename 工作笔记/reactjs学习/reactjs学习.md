@@ -597,3 +597,150 @@ ReactDOM.render(
 
    组件将要卸载
 
+# react插槽
+
+组件中写入内容，这些内容可以被识别和控制
+
+
+
+原理：
+
+组件中的html可以传入props中。
+
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './App.css'
+class Childcom extends React.Component{
+  constructor(props){
+    super(props)
+    this.state= {
+      value:''
+    }
+  }  
+  render(){
+    let headerCom,mainCom,footerCom
+    this.props.children.forEach(item=>{
+      if(item.props['data-position']=='header'){
+        headerCom = item
+      }else if(item.props['data-position']=='main'){
+        mainCom = item
+      }else if(item.props['data-position']=='footer'){
+        footerCom = item
+      }
+    })
+    return (
+      <div>
+        <h1>我是子组件</h1>
+        <div className='cols'>
+        <div className = 'header'>{headerCom}</div>
+        <div className = 'main'>{mainCom}</div>
+        <div className = 'footer'>{footerCom}</div>
+        </div>
+      </div>
+    )
+  }
+}
+
+class Parentcom extends React.Component{
+  constructor(props){
+    super(props)
+    this.state= {
+      value:3
+    }
+  }  
+  render(){
+    return (
+      <div>
+        <Childcom>
+          <h1 data-position='footer'>我是尾部的组件</h1>
+          <h1 data-position='main'>我是中间的组件</h1>
+          <h1 data-position='header'>我是头部的组件</h1>
+        </Childcom>
+      </div>
+    )
+  }
+}
+
+
+ReactDOM.render(
+  <Parentcom />,
+  document.getElementById('root')
+);
+```
+
+# react路由
+
+根据不同的路径显示不同的内容
+
+安装
+
+```
+cnpm install react-router-dom --save
+```
+
+```
+// hash模式
+import { HashRouter as Router, Link, Route, Redirect} from 'react-router-dom'
+
+//history模式
+import { BrowserRouter as Router, Link, Route, Redirect} from 'react-router-dom'
+```
+
+
+
+## ReactRouter 三大组件
+
+1. Router ：所有路由组件的根组件（底层组件），包裹路由规则的最外层容器。
+
+   - basename：设置跟此路由根路径，router可以在1个组件中写多个。
+
+2. Route:路由规则匹配组件，显示当前规则对应的组件
+
+   - path：跳转路径如（/Home），动态路由：（'/New/:id'）
+
+   - exact：代表路径/Home路径下面的子路径必须严格执行匹配
+
+   - component：/Home路径下显示哪个组件
+
+3. Redirect ：页面重定向
+
+   - from：重哪个页面 开始重定向 如 from = "/"
+   - to：重定向到如 to = "/Home"
+
+4. Switch：只渲染不重复的Route组件
+
+5. 
+
+6. Link：路由跳转的组件 
+
+   - replace：将新地址替换当前页面路径
+
+   - to：代表点击跳转的路径如（/Home），动态路由：'/New/456789'  ，to= {
+
+        pathname:'/me',//跳转路径
+
+        search:'?username=admin',//get请求参数
+
+        hash:'#abc',//设置HASH值
+
+        state:{ msg:'helloworld'},//传入组件的数据
+
+       }之后可以通过props拿值
+
+## React js跳转路由
+
+```
+this.props.history.push({
+    pathname:'/Me',
+    hash:'#456',
+    search:'?username=admin',
+    state:{
+    id:45
+    },
+})
+this.props.history.push('/',{})//第二个参数是props.history.state
+```
+
+# React Redux
+
