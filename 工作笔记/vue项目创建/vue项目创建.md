@@ -30,23 +30,23 @@ winpty vue.cmd create probject
 
 可以用箭头加回车选择
 
-![34ae6cdc47c790fe0135179b3d17492](C:\Users\JOKE\Desktop\工作笔记\vue项目创建\34ae6cdc47c790fe0135179b3d17492.png)
+![34ae6cdc47c790fe0135179b3d17492](\34ae6cdc47c790fe0135179b3d17492.png)
 
 这里用空格选择
 
-![ed519fa51a2a42a4add790e752e9293](C:\Users\JOKE\Desktop\工作笔记\vue项目创建\ed519fa51a2a42a4add790e752e9293.png)
+![ed519fa51a2a42a4add790e752e9293](\ed519fa51a2a42a4add790e752e9293.png)
 
 这里选择最后一个prettier
 
-![7d1c57a4ba02003eb6df35925c0eef8](C:\Users\JOKE\Desktop\工作笔记\vue项目创建\7d1c57a4ba02003eb6df35925c0eef8.png)
+![7d1c57a4ba02003eb6df35925c0eef8](\7d1c57a4ba02003eb6df35925c0eef8.png)
 
 这里选择第一个
 
-![微信截图_20201103180549](C:\Users\JOKE\Desktop\工作笔记\vue项目创建\微信截图_20201103180549.png)
+![微信截图_20201103180549](.\微信截图_20201103180549.png)
 
 这里提示是否保存为模板
 
-![微信截图_20201103180705](C:\Users\JOKE\Desktop\工作笔记\vue项目创建\微信截图_20201103180705.png)
+![微信截图_20201103180705](\微信截图_20201103180705.png)
 
 # 4.添加eslintcr.js
 

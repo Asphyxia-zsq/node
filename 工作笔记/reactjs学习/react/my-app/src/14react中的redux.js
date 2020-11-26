@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './App.css'
 import {createStore} from 'redux'
-import {Povider,connet} from 'react-redux'
 
 // 定义reducer函数
 function reducer(state={num:0},action){
@@ -13,7 +12,7 @@ function reducer(state={num:0},action){
     case 'decrement':
       state.num--
       break;
-    default: 
+    default:
       break;
   }
   return {...state}
