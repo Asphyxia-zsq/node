@@ -99,26 +99,51 @@ const fs = require("fs");
 
 
 
-for(var i=0;i<=2;i++){
-    // fs.appendFile('./data.json','{"content":"我是内容"}',err=>{
+// for(var i=0;i<=5000;i++){
+//     fs.appendFile('./data.json','{"content":"我是内容"}\n',err=>{
 
-    // })
-    console.log(i)
-}
+//     })
+// }
 
-//fs 重文件流中读取数据
-
+// //fs 从文件流中读取数据
+// // 创建一个读取流
 // let ReadStream = fs.createReadStream('./data.json')
 // let str = ''
 // let count = 0
+// // 监听读取流状态
 // ReadStream.on('data',(data)=>{
 //     count++
 //     str += data
 // })
+// // 监听读取完成打印数据
 // ReadStream.on('end',()=>{
 //     console.log(str)
 //     console.log(count)
 // })
+// // 读取错误
 // ReadStream.on('error',(err)=>{
 //     if(err) return console.log(err)
 // })
+
+
+// // 引流方式写入文件 只能写入一次
+
+// let WriteStream = fs.createWriteStream('./app.json')
+
+// WriteStream.write('HHHH\nHHHH\n','UTF8')
+// // 标记写入完成
+// WriteStream.end()
+
+// WriteStream.on('finish',()=>{
+//     console.log('写入完成')
+// })
+// WriteStream.on('error',(err)=>{
+//     console.log(err)
+// })
+
+
+// 管道流
+var readStream = fs.createReadStream('./mn.jpg')
+var writeStream = fs.createWriteStream('./img/mn1.jpg')
+
+readStream.pipe(writeStream)

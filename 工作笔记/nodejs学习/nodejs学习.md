@@ -181,17 +181,17 @@ npm i jqery@1.8.0 --save //指定版本安装
 
 # node 中的fs模块
 
-1. fs.stat //检测时文件还是目录
-2. fs.mkdir //创建目录
-3.  fs.writeFile //写入文件
-4. fs.appendFile //添加文件
-5. fs.readFile //读取文件
-6. fs.readdir //读取目录
+1. 
+2. 
+3.  
+4. 
+5. 
+6. 
 7. fs.rename //重命名
 8. fs.rmdir 删除目录
 9. fs.unlink 删除文件
 
-
+### fs.stat //检测时文件还是目录
 
 ```
 const fs = require('fs')
@@ -202,7 +202,7 @@ fs.stat('./html',(err,data)=>{
 })
 ```
 
-
+### fs.mkdir //创建目录
 
 ```
 fs.mkdir('./css',(err,data)=>{
@@ -211,7 +211,7 @@ fs.mkdir('./css',(err,data)=>{
 })
 ```
 
-
+### fs.writeFile //写入文件
 
 ```
 //创建并写入文件，如果文件存在进行替换
@@ -224,7 +224,7 @@ fs.writeFile('./html/index.html','你好nodejs',err=>{
 })
 ```
 
-
+### fs.appendFile //添加文件
 
 ```
 //如果文件不存在创建并写入，如果存在追加内容
@@ -236,7 +236,7 @@ fs.appendFile('./css/base.css','body{color:red};',err=>{
 })
 ```
 
-
+### fs.readFile //读取文件
 
 ```
 fs.readFile('./html/index.html',(err,data)=>{
@@ -247,7 +247,7 @@ fs.readFile('./html/index.html',(err,data)=>{
 })
 ```
 
-
+### fs.readdir //读取目录
 
 ```
 fs.readdir('./html',(err,data)=>{
@@ -257,6 +257,63 @@ fs.readdir('./html',(err,data)=>{
     console.log(data) 
 })
 ```
+
+### fs.createReadStream //从文件流中读取数据
+
+```
+//fs 从文件流中读取数据 可以追加数据
+// 创建一个读取流
+let ReadStream = fs.createReadStream('./data.json')
+let str = ''
+let count = 0
+// 监听读取流状态
+ReadStream.on('data',(data)=>{
+    count++
+    str += data
+})
+// 监听读取完成打印数据
+ReadStream.on('end',()=>{
+    console.log(str)
+    console.log(count)
+})
+// 读取错误
+ReadStream.on('error',(err)=>{
+    if(err) return console.log(err)
+})
+```
+
+fs.createReadStream //从文件流中读取数据
+
+```
+// 引流方式写入文件 只能写入一次
+
+let WriteStream = fs.createWriteStream('./app.json')
+
+WriteStream.write('HHHH\nHHHH\n','UTF8')
+// 标记写入完成
+WriteStream.end()
+
+WriteStream.on('finish',()=>{
+    console.log('写入完成')
+})
+WriteStream.on('error',(err)=>{
+    console.log(err)
+})
+```
+
+
+
+### readStream.pipe(writeStream)
+
+```
+// 管道流 用于复制文件
+var readStream = fs.createReadStream('./mn.jpg')
+var writeStream = fs.createWriteStream('./img/mn1.jpg')
+
+readStream.pipe(writeStream)
+```
+
+
 
 # async和await
 
