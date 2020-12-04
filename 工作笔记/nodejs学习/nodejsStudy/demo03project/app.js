@@ -1,5 +1,10 @@
-var http = require('http');
+const http = require('http');
+const common = require('./module/routes.js')
 http.createServer(function (request, response) {
-  response.writeHead(200, {'Content-Type': 'text/html;charset="utf-8"'});
-  response.end('Hello World');
+  
+  common.static(request,response,'./')
+  
+ 
 }).listen(8081);
+
+console.log('Server running at http://127.0.0.1:8081/');

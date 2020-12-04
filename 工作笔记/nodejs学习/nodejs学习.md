@@ -342,3 +342,17 @@ b();
 
 ```
 
+# 创建一个web服务器
+
+```
+node\工作笔记\nodejs学习\nodejsStudy\demo03project   代码目录
+```
+
+# EJS模块引擎
+
+安装
+
+```
+npm i ejs --save
+```
+
