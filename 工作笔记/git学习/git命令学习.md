@@ -309,7 +309,21 @@ $ git branch
 
 因为创建、合并和删除分支非常快，所以Git鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在`master`分支上工作效果是一样的，但过程更安全。
 
+### 小结
+
+查看分支：`git branch`
+
+创建分支：`git branch <name>`
+
+切换分支：`git checkout <name>`或者`git switch <name>`
+
+创建+切换分支：`git checkout -b <name>`或者`git switch -c <name>`
+
+合并某分支到当前分支：`git merge <name>`
+
+删除分支：`git branch -d <name>`
 
 
-## 解决冲突
+
+
 
