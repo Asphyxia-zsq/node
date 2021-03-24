@@ -1,3 +1,5 @@
+
+
 # nodejs介绍
 
 1. node.js是基于Google V8引擎     把V8引擎搬到服务器上用于做服务器的软件
@@ -348,11 +350,692 @@ b();
 node\工作笔记\nodejs学习\nodejsStudy\demo03project   代码目录
 ```
 
+# Mongodb
+
+## 下载地址
+
+https://www.mongodb.com/try/download/community
+
+配置环境变量
+
+```
+//系统变量path里添加 D:\MongoDB\Server\4.4\bin
+```
+
+
+
+## 使用
+
+启动命令 mongo
+
+查看计算机的数据库 show dbs
+
+创建数据库 use itying
+
+给数据库的表添加数据 db.user.insert({"username":"zansan","age":18})
+
+查看集合列表  show collections
+
+查看集合user的数据 db.user.find()
+
+删除数据库 db.dropDatabase()
+
+删除集合 db.user.drop()
+
+
+
+### 查找数据find（）
+
+db.user.find({"age":13}) 查找所有age=13的数据
+
+.find({"age":{$gt:22}}) age>22
+
+.find({"age":{$lt:22}}) age>22
+
+.find({"age":{$gt:22}}) age>=22
+
+.find({"age":{$gte:22,$lte,26}}) age>=22  age<=23
+
+.find({}"name",:/zhang/}) 查找name含有zhang的所有数据 正则
+
+.find({},{name:1,age:1}) 查找显示指定列
+
+
+
+### 排序 sort()
+
+db.user.find().sort(”age“:1) age 升序
+
+db.user.find().sort(”age“:-1) age 降序
+
+
+
+### 查询前5条数据 分页
+
+db.user.find().limit(5) 查询前5条
+
+db.user.find().skip(10) 跳过前10条查询
+
+page:查询页数，count一页显示几条
+
+db.user.find().skip(page-1*count).limit(count)
+
+
+
+### 查看条数
+
+db.user.find().count()
+
+
+
+### or 与 查询
+
+db.user.find({$or:[{"age":22},{"age":25}]}) 查找age=22或者age=25的数据
+
+
+
+### 修改数据和新增数据
+
+db.user.update({"name":"小明"},{$set:{"age":16}})  查找名字为小明修改年龄为16岁
+
+
+
+默认修改一条，如果要修改多条
+
+db.user.update({"name":"小明"},{$set:{"age":16}},{multi:true}) 
+
+### 删除数据
+
+db.user.remove({"name":"wanwu"}) 删除name = wanwu的数据 
+
+默认删除所有满足条件的数据
+
+如果要只删除一条
+
+db.user.remove({"name":"wanwu"},{justOne:true}) 
+
+
+
+## 索引基础
+
+### 获取语句的执行时间
+
+db.user.find().explain("executionStats")
+
+
+
+### 设置索引
+
+db.user.ensureIndex({"username":1})  设置索引
+
+db.user.dropIndex({"username":1}) 删除索引
+
+db.user.getIndexes()获取当前集合索引
+
+
+
+#### 复合索引
+
+db.user.ensureIndex({"username":1},{”phone“:"1"})  设置索引
+
+
+
+#### 唯一索引
+
+db.user.ensureIndex({"age":1},{"unique":true})
+
+
+
+## 账户权限配置
+
+use admin => show users //查看用户
+
+db.dropUser('admin') //删除超级管理员
+
+db.updateUser(‘admin’,{pwd:'123456'}) //修改用户密码
+
+1创建超级管理员
+
+```
+use admin
+db.createUser({
+	user:'admin',
+	pwd:'123456',
+	roles:[{role:'root',db:'admin'}]
+})
+
+```
+
+2修改mongodb数据库配置文件 bin下的mongod.cfg
+
+```
+security:
+  authorization: enabled
+```
+
+3重启mongodb服务
+
+win+r   services.msc
+
+```
+数据库用户角色：read、readWrite;
+数据库管理角色：dbAdmin、dbOwner、userAdmin；
+集群管理角色：clusterAdmin、clusterManager、clusterMonitor、hostManager；
+备份恢复角色：backup、restore；
+所有数据库角色：readAnyDatabase、readWriteAnyDatabase、userAdminAnyDatabase、dbAdminAnyDatabase
+超级用户角色：root
+内部角色：__system
+```
+
+4 切换admin 输入密码
+
+```
+use admin 
+db.auth('admin','123456')
+```
+
+
+
+5给某个数据库添加管理员
+
+```
+use itying
+db.createUser({
+	user:'itying',
+	pwd:'123456',
+	roles:[{role:'dbOwner',db:'itying'}]
+})
+
+```
+
+## 数据库集合与集合的关系
+
+1一对一关系
+
+例如：一个人对应一个唯一的身份证号
+
+2一对多关系
+
+例如：一个班级对应多名学生，
+
+3多对多关系
+
+例如：一个学生可以选多门课程，而同一门课程可以被多个学生选修
+
+# mongodb的聚合管道
+
+使用聚合管道可以对集合中的文档进行变换和组合
+
+实际项目中用于表的关联查询和数据统
+
+| 管道操作 | description                                 |                           |
+| -------- | ------------------------------------------- | ------------------------- |
+| $project | 增加、删除、重命名字段                      | 多字段时可以只显示name id |
+| $match   | 条件匹配、只满足条件的文档才能进入下一阶段  |                           |
+| $limit   | 限制结果的数量                              |                           |
+| $skip    | 跳过文档的数量                              |                           |
+| $sort    | 条件排序                                    |                           |
+| $group   | 条件组合结果 统计                           |                           |
+| $lookup  | 操作符 用于引入其它集合的数据（表关联查询） |                           |
+
+
+
+```
+//查找order表的数据 只显示trade_no 和 all_price字段
+db.order.aggregate([
+	{
+		$project:{ trade_no:1,all_price:1}
+	}
+])
+
+
+// 查找all_price <= 90 的数据
+db.order.aggregate([
+	{
+		$project:{ trade_no:1,all_price:1}
+	},
+	{
+		$match:{ all_price:{$gte:90}}
+	}
+])
+
+
+// 以orderid进行分组 并且将num进行相加
+db.order.aggregate([
+	{
+		$group:{ id:"$orderid",total:{$sum:"$num"}}
+	}
+])
+
+
+//查找order表的数据 只显示trade_no 和 all_price字段 条件价格<=90  进行倒叙排列
+db.order.aggregate([
+	{
+		$project:{ trade_no:1,all_price:1}
+	},
+	{
+		$match:{ all_price:{$gte:90}}
+	},
+	{
+		$sort:{ all_price:-1}
+	}
+])
+
+//查找order表的数据 只显示trade_no 和 all_price字段 条件价格<=90  进行倒叙排列  只返回1条数据
+db.order.aggregate([
+	{
+		$project:{ trade_no:1,all_price:1}
+	},
+	{
+		$match:{ all_price:{$gte:90}}
+	},
+	{
+		$sort:{ all_price:-1}
+	}
+	{
+		$limit:1
+	}
+])
+
+//表的关联查询
+from:关联的表
+localField：order表的关联的字段
+foreignField：order_item表的关联的字段
+as:把关联后的数据放到items里面
+db.order.aggregate([
+	{
+		$lookup:{
+			from："order_item",
+			localField:"order_id",
+			foreignField:"order_id",
+			as:"items"
+		}
+	}
+])
+```
+
+# mongodb的备份还原
+
+备份
+
+```
+
+cmd 执行命令
+mongodunp -h dbhost -d dbname -o dbdirectory
+参数说明
+	-h：mongodb所在服务器地址 ，例如127.0.0.1 当然也可以指定端口号 127.0.0.1：27017
+	-d: 需要备份的数据库实例 例如test表
+	-p：密码
+	-u：用户名
+	-o：备份的数据存放位置，例如：c/abc/这个目录里面存放该数据库实例的备份数据
+```
+
+还原
+
+```
+mongorestore -h dbhost -d dbname dbdirectory
+参数说明
+	-drop:恢复的时候先伤处当前的数据，然后回复备份的数据，就是说回复后，备份后添加修改的数据会被删除慎用
+```
+
+# nodejs调用mongo驱动
+
+```
+npm init --yes
+npm i mongodb --save
+```
+
+## 对数据库的增删改查
+
+例子demo04
+
+```
+
+// 引入mongodb
+const {MongoClient} = require('mongodb');
+
+// 定义数据库连接地址 终端输入mongo可查看
+const url = 'mongodb://127.0.0.1:27017';
+
+// 定义要操作的数据库
+const dbName = 'itying'
+
+// 实例化MongoClient 传入数据库连接地址
+const client = new MongoClient(url,{ useUnifiedTopology: true })
+
+// 连接数据库
+client.connect((err)=>{
+  if(err){
+    console.log(err);
+    return;
+  }
+  console.log('数据库连接成功')
+  let db = client.db(dbName)
+  let collection = db.collection("user");
+  
+  // 查找数据
+  // collection.find({}).toArray((err,data)=>{
+  //   console.log(data)
+  //   // 因为回调时异步，所以要在这里关闭
+  //   // 操作数据库完毕后要关闭数据库连接
+  //   client.close()
+  // })
+
+  // 增加数据
+  // collection.insertOne({"name":"小明1","age":10},(err,result)=>{
+  //   if(err){
+  //     return console.log(err);
+  //   }
+  //   console.log('增加成功',result)
+  //   client.close()
+  // }) 
+
+  // 修改数据
+  // collection.updateOne({"name":"小明1"},{$set:{"name":"小明111"}},(err,result)=>{
+  //   if(err){
+  //     return console.log(err);
+  //   }
+  //   console.log('修改成功',result)
+  //   client.close()
+  // }) 
+
+  // 删除一条数据
+  // collection.deleteOne({"name":"小明111"},(err,result)=>{
+  //   if(err){
+  //     return console.log(err);
+  //   }
+  //   console.log('删除数据成功',result)
+  //   client.close()
+  // }) 
+
+  // 删除多条数据
+  // collection.deleteMany({"name":"小明111"},(err,result)=>{
+  //   if(err){
+  //     return console.log(err);
+  //   }
+  //   console.log('删除数据成功',result)
+  //   client.close()
+  // }) 
+})
+```
+
+# Express
+
+## 使用
+
+```
+npm init --yes
+npm i express --save
+```
+
+代码
+
+```
+const express = require('express');
+const app = new express();
+app.get('/',(req,res)=>{
+  res.send('hello wold')
+  //get 取值 req.query
+  //动态路由取值 req.params['name']
+})
+app.listen(3000)
+
+ 
+```
+
+## express里面使用ejs
+
+```
+const express = require('express');
+const app = new express();
+// 1.安装ejs npm i ejs --save
+// 2.配置ejs
+app.set("view engine","ejs");
+// 使用ejs
+// res.render("index",{}) //默认加载引擎的文件夹是views
+app.get('/',(req,res)=>{
+  let title = '我是标题后台数据'
+  res.render("index",{title})
+})
+app.listen(3000)
+```
+
+## express里面的中间件
+
+#### 配置应用级中间件(用于权限判断)
+
+```
+app.use((req,res,next)=>{
+  console.log(new Date());
+  next();
+})
+```
+
+#### 配置路由级中间件
+
+```
+
+app.get('/news/add',(req,res,next)=>{
+  console.log('这就是路由集中间件');
+  next();
+})
+
+app.get('/news/:id',(req,res)=>{
+  res.send("新闻动态路由"+ req.params['id'])
+})
+```
+
+#### 错误处理中间件（一般用在路由匹配完成）
+
+```
+//匹配路由必须卸载最后面
+app.use((req,res,next)=>{
+  res.status(404).send('404')
+})
+```
+
+## 内置中间件
+
+```
+app.use('/static',express.static('public'))
+```
+
+### 第三方中间件
+
+```
+用于获取post穿值
+const express = require('express');
+const app = new express();
+
+1、npm i body-parser --save
+2、const bodyParser = require('body-parser')
+3、配置中间件
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+4、接收post数据 req.body
+
+```
+
+```
+// 使用第三方中间件
+app.get('/login',(req,res)=>{
+  //req.query 获取get传值
+  res.render("login",{})
+})
+app.post('/dologin',(req,res)=>{
+  //req.body 获取post传值
+  let data = req.body
+  res.send(`账号：${data.username} 密码：${data.pass}`)
+})
+```
+
+## express里面的cookie
+
+```
+npm install cookie-parser --save
+var express = require('express')
+var cookieParser = require('cookie-parser')
+ 
+var app = express()
+app.use(cookieParser())
+```
+
+```
+app.get('/',(req,res)=>{
+  let title = '我是标题后台数据'
+  // 设置cookie
+  res.cookie("username","张三",{
+    maxAge:1000*60*60
+  })
+  res.render("index",{title})
+})
+app.get('/getcookie',(req,res)=>{
+  let username = req.cookies.username
+  res.send("获取cookie" + username)
+})
+```
+
+```
+第三个参数
+maxAge:设置过期时间，
+signed:是否加密，
+expires:设置过期日期Date，
+httpOnly:设置是否只能后端访问， true只能后端访问
+path：设置哪些路由可以访问cookie，
+domain:实现多域共享cookie   如 aaa.itying.com  bbb.itying.com 写法domain:".itying.com"
+secure:设置成为true时，cookie在http无效，在https中才有效
+
+```
+
+### 实现cookie加密
+
+```
+var express = require('express')
+var cookieParser = require('cookie-parser')
+var app = express()
+
+//1、配置中间件时需要传入加密的参数
+app.use(cookieParser("itying"))
+
+//2、设置cookie时第三个参数传入signed：true
+app.get('/',(req,res)=>{
+  // 设置cookie
+  res.cookie("username","张三",{
+    maxAge:1000*60*60,
+    signed:true
+  })
+  res.send("index")
+})
+
+//3、获取时使用req.signedCookies
+app.get('/getcookie',(req,res)=>{
+  let username = req.signedCookies.username
+  res.send("获取cookie" + username)
+})
+```
+
+## express里面的session
+
+cookie保存在浏览器上 session保存在服务器上 session基于cookie
+
+```
+cnpm install express-session --save
+const session = require('express-session')
+
+var app = express()
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat', //服务器端生成session的签名（可以随意写）
+  resave: false, //强制存储session 即使它没有变化
+  saveUninitialized: true, //强制将未初始化的session存储
+  cookie: { 
+  	secure: false, //ture代表只有https才能访问cookie
+  	maxAge: 100*60*60
+  } //配置cookie的信息
+  name:'itying',//修改session对应cookie的名称
+  rolling:true，//表示会对session的过期时间进行续期  在每次请求时强行设置cookie，这将充值cookie过期时间
+  
+}))
+ //设置session 
+  req.session.username = "zhangsan"
+  //获取 req.session.username
+  
+```
+
+
+
 # EJS模块引擎
 
 安装
 
 ```
 npm i ejs --save
+```
+
+```
+//ejs渲染变量
+let title = '我是标题后台数据'
+<%=title%>
+
+//渲染html
+let h3 = "<H3>我是一个h3</H3>"
+<%-h3%>
+
+//条件判断
+let flag = true
+let score = 60
+<%if(flag==true){%>
+<strong>flag==true</strong>
+<%}%>
+
+<%if(score>=60){%>
+<p>及格</p>
+<%}else{%>
+<p>不及格</p>
+<%}%>
+
+//循环遍历
+let list = [111,222,333]
+<ul>
+<%for(var i=0;i<list.length;i++){%>
+<li><%=list[i]%></li>
+<%}%>
+</ul>
+
+
+//ejs引入公共文件（头部，底部等）
+<%- include('footer.html') %>
+
+
+```
+
+## 指定ejs模板位置，默认在views
+
+```
+app.set('views',__drname+'views1')
+```
+
+## ejs后缀修改为html
+
+```
+const express = require('express')
+const app = new express();
+const ejs = require('ejs')
+
+app.engine("html",ejs.__express)
+app.set("view engine","html")
+
+```
+
+## 利用express.static 托管静态文件
+
+```
+const express = require('express')
+const app = new express();
+app.use(express.static('public'))
+//配置完就可以使用public的文件了
+
+//也可以配置虚拟目录
+app.use('/static',express.static('public'))
 ```
 
