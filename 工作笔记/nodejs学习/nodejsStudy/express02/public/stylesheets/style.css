@@ -1,0 +1,13 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+.aaa{
+  width: 80px;
+  height: 580px;
+  /* background: repeating-linear-gradient(#f00,#ff0 10%,#f00 15%);; */
+}

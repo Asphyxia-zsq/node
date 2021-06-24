@@ -10,9 +10,116 @@
 <body>
   <h2>post提交数据</h2>
   <form action="/dologin" method="post">
-    用户名：<input type="text" name='username'>
-    密码：<input type="password" name='pass'>
-    <input type="submit" value="提交">
+    用户名：<input type="text"  name='username' />
+    密码：<input type="password"  name='pass' />
+    <input type="submit" value="form表单提交">
   </form>
+
+
+  <button id="btn">点击axios请求接口：账号123密码123</button>
 </body>
+<script src="/js/script.js"></script>
+<script>
+  (function(){
+    window.hookAjax = function (funs) {
+      function hookfun(fun) {
+        return function () {
+            var args = [].slice.call(arguments)
+            //1.如果fun拦截函数存在，则先调用拦截函数
+            if (funs[fun] && funs[fun].call(this, args, this.xhr)) {
+              return;
+            }
+          //2.调用真正的xhr方法
+          this.xhr[fun].apply(this.xhr, args);
+        }
+      }
+
+      function getFactory(attr) {
+          return function () {
+              return this[attr + "_"] || this.xhr[attr]
+          }
+      }
+
+          function setFactory(attr) {
+              return function (f) {
+                  var xhr = this.xhr;
+                  var that = this;
+                  //区分是否回调属性
+                  if (attr.indexOf("on") != 0) {
+                      this[attr + "_"] = f;
+                      return;
+                  }
+                  if (funs[attr]) {
+                      xhr[attr] = function () {
+                          funs[attr](that) || f.apply(xhr, arguments);
+                      }
+                  } else {
+                      xhr[attr] = f;
+                  }
+              }
+          }
+      
+
+
+
+      //保存真正的XMLHttpRequest对象
+      window._ahrealxhr = window._ahrealxhr || XMLHttpRequest
+      //1.覆盖全局XMLHttpRequest，代理对象
+      XMLHttpRequest = function () {
+        //创建真正的XMLHttpRequest实例
+        this.xhr = new window._ahrealxhr;
+        for (var attr in this.xhr) {
+          var type = "";
+          try {
+            type = typeof this.xhr[attr]
+          } catch (e) {}
+          if (type === "function") {
+            //2.代理方法
+            this[attr] = hookfun(attr);
+          } else {
+            //3.代理属性
+            Object.defineProperty(this, attr, {
+              get: getFactory(attr),
+              set: setFactory(attr)
+            })
+          }
+        }
+      }
+    }
+  })()
+</script>
+<script>
+  hookAjax({
+    onreadystatechange(e){
+      console.log()
+      var xmlhttp = e.xhr
+      if (xmlhttp.readyState==4)
+      {// 4 = "loaded"
+      if (xmlhttp.status==200)
+        {// 200 = "OK"
+          console.log(xmlhttp.responseText)
+        }
+      else
+        {
+        alert("Problem retrieving XML data:" + xmlhttp.statusText);
+        }
+      }
+
+    }
+  })
+  var btn = document.querySelector('#btn')
+  btn.onclick = function(){
+    axios({
+      url:'http://localhost:3000/dologin1',
+      method:'post',
+      data:{
+        username:123,
+        pass:123
+      }
+    }).then(res=>{
+      console.log(res.data)
+      alert(JSON.stringify(res.data))
+    })
+  }
+</script>
 </html>

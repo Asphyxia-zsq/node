@@ -962,6 +962,82 @@ app.use(session({
   
 ```
 
+## express里面的session保存到数据库
+
+```
+const express = require('express');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
+var app = express()
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat', //服务器端生成session的签名（可以随意写）
+  resave: false, //强制存储session 即使它没有变化
+  saveUninitialized: true, //强制将未初始化的session存储
+  cookie: { 
+  	secure: false, //ture代表只有https才能访问cookie
+  	maxAge: 100*60*60
+  }, //配置cookie的信息
+  name:'itying',//修改session对应cookie的名称
+  rolling:true,//表示会对session的过期时间进行续期  在每次请求时强行设置cookie，这将充值cookie过期时间
+  store: MongoStore.create({
+    mongoUrl: 'mongodb://127.0.0.1:27017/',//无用户名密码
+    // mongoUrl: 'mongodb://admin:123456@127.0.0.1:27017',//有用户名密码
+    dbName:'shop',
+    touchAfter: 24 * 3600 // time period in seconds
+  }),
+}))
+
+app.get('/getcookie',(req,res)=>{
+  let username = req.cookies.username
+  res.send("获取cookie" + username)
+})
+
+
+app.get('/setsession',(req,res)=>{
+  // 设置session
+  console.log(res.sessions)
+  req.session.username = '我是session的名称小明'
+  res.send('开始设置session')
+})
+```
+
+## express路由模块化
+
+```
+//router/login.js中的代码
+const express = require('express');
+var router = express.Router();
+
+router.get('/',(req,res,next) =>{
+  res.send('登录页面111')
+})
+module.exports = router
+
+//app.js中的代码
+const app = new express();
+const login = require('./router/login');
+app.use('/login1',login);
+```
+
+## express应用程序生成器
+
+https://www.expressjs.com.cn/starter/generator.html
+
+```
+//安装
+npx express-generator || cnpm i -g express-generator
+```
+
+```
+express --view=ejs express10
+```
+
+```
+//运行  node bin/www
+```
+
 
 
 # EJS模块引擎

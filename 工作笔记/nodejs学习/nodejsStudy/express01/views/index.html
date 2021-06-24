@@ -8,8 +8,121 @@
   <link rel="stylesheet" href="/css/base.css">
 </head>
 <body>
-  <h2>我是一个ejs模板引擎</h2>
+  <button id="btn1">连接WebSocket</button>
+  <!-- <h2>我是一个ejs模板引擎</h2>
   <p><%=title%></p>
   <%- include('footer.html') %>
+  <div>
+    <h4>可以访问的页面</h4>
+    <p>http://localhost:3000/，测试WebSocket和ejs模板渲染</p>
+    <p>http://localhost:3000/login，测试登录接口的post请求和默认表单提交的post</p>
+    <p>http://localhost:3000/login1</p>
+    <p>http://localhost:3000/news</p>
+    
+    <h5>页面目录：view</h5>
+    <h5>后端路由文件app.js</h5>
+    <h5>静态文件目录static</h5> -->
+  </div>
 </body>
+<script>
+  (function(){
+    window.hookSocket = function (funs){
+      function hookfun(fun) {
+        return function () {
+          var args = [].slice.call(arguments)
+          //1.如果fun拦截函数存在，则先调用拦截函数
+          if (funs[fun] && funs[fun].call(this, ...args)) {
+            return;
+          }
+          //2.调用真正的socket方法
+          this.socket[fun].apply(this.socket, args);
+        }
+      }
+
+      function getFactory(attr) {
+          return function () {
+            console.log(arguments,'arguments')
+              return this[attr + "_"] || this.socket[attr]
+          }
+      }
+
+      function setFactory(attr) {
+          return function (f) {
+              var socket = this.socket;
+              var that = this;
+              //区分是否回调属性
+              if (attr.indexOf("on") != 0) {
+                  this[attr + "_"] = f;
+                
+                  return;
+              }
+              if (funs[attr]) {
+                  socket[attr] = function () {
+                      funs[attr](...arguments) || f.apply(socket, arguments);
+                  }
+              } else {
+                socket[attr] = f;
+              }
+          }
+      }
+      //保存真正的WebSocket对象
+      window._ahrealSocket = window._ahrealSocket || WebSocket
+      //1.覆盖全局WebSocket，代理对象
+      WebSocket = function(url){
+        this.socket = new window._ahrealSocket(url);
+        for(var attr in this.socket){
+          var type = ''
+          try {
+            type = typeof this.socket[attr]
+          } catch (error) { }
+        
+          if(type == 'function'){
+            //2.代理方法
+            this[attr] = hookfun(attr)
+          }else{
+            //3.代理属性
+            Object.defineProperty(this, attr, {
+              get: getFactory(attr),
+              set: setFactory(attr)
+            })
+          }
+        }
+      }
+    }
+  })()
+  
+
+
+  
+</script>
+
+<script>
+// 连接WebSocket
+hookSocket({
+  onmessage(e){
+    console.log(e.data,'这是返回的数据')
+    return true
+  },
+  send(e){
+    console.log(e,'这里发送的数据')
+  }
+})
+
+var btn1 = document.querySelector('#btn1');
+
+btn1.onclick = function(){
+  var ws = new WebSocket('ws://localhost:3001');
+  ws.onopen = function(evt) { 
+    ws.send("Hello WebSockets!");
+  };
+
+  ws.onmessage = function(evt) {
+    console.log( "WebSocket返回的数据: " + evt.data);
+  };
+  ws.onclose = function(evt) {
+    console.log("Connection closed.");
+  }; 
+}
+
+</script>
 </html>
